@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App hosted on Render.com"/>
+    <HelloWorld msg="Welcome to Your Vue.js App hosted on Render.com.  Hi Mike Kevin Erich and Byron."/>
   </div>
 </template>
 
