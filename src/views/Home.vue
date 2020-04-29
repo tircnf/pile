@@ -1,7 +1,6 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/marvel-banner.jpg">
-    <HelloWorld msg="Search for a Marvel Comic Something.  (Character, book, etc)"/>
+    <HelloWorld msg="Search for a Marvel character or comic"/>
   </div>
 </template>
 

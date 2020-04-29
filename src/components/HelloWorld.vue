@@ -1,47 +1,151 @@
 <template>
-    <div class="hello">
-        <h1>{{ msg }}</h1>
+    <v-container class="helloworld">
+        <v-row class="text-center">
+            <v-col cols="12">
+                <v-img
+                        alt="Vue logo"
+                        contain
+                        height="409"
+                        src="../assets/marvel-banner.jpg"
 
-        <label>Enter the name for a 'starts with' match
-            <input @keyup.enter="search" v-model="name">
-        </label>
-        <button @click="search">Search</button>
+                />
+            </v-col>
+        </v-row>
 
+        <v-row>
+            <v-col cols="12">
+                <h2>{{ msg }}</h2>
+            </v-col>
 
-        <div class="searchResults">
-
-
-            <ul>
-                <li v-if="result.attributionHTML"><span v-html="result.attributionHTML"/>
-                    <ul>
-                        <li>Showing results {{result.data.offset}} to {{result.data.offset + result.data.count}} of
-                            {{result.data.total}}
-                        </li>
-                    </ul>
-                </li>
-                <li :key="character.id" v-for="character in result.data.results">
-                    <!--suppress HtmlUnknownTarget -->
-                    <img :src="`${character.thumbnail.path}/portrait_small.jpg`" alt="thumbnail image">
-                    {{character.id}} - {{character.name}}
-                    <p><span v-html="character.description"/></p>
-                    <ul>
-                        <li> Comics: {{character.comics.available}}</li>
-                        <li> Series: {{character.series.available}}</li>
-                        <li> Stories: {{character.stories.available}}</li>
-                        <li> events: {{character.events.available}}</li>
-                        <li :key="url.type" v-for="url in character.urls">
-                            {{url.type}} <a :href="url.url" target="_blank">{{url.url}}</a>
-                        </li>
-                    </ul>
-                    <!--                <pre>{{character}}</pre>-->
-                </li>
-            </ul>
-
-        </div>
-        <!--        <pre>{{result}}</pre>-->
+            <v-col cols="6">
+                <v-text-field
+                        :outlined="true"
+                        @keyup.enter="search"
+                        label="Enter the name for a 'starts with' match"
+                        v-model="name"
+                />
+            </v-col>
+            <v-col cols="2">
+                <v-btn class="primary"
+                       @click="search"
+                >Search</v-btn>
+            </v-col>
 
 
-    </div>
+        </v-row>
+
+        <v-row>
+
+            <v-col cols="3">
+
+                <h3>Characters</h3>
+                <ul>
+                    <li v-if="result.attributionHTML"><span v-html="result.attributionHTML"/>
+                        <ul>
+                            <li v-if="result.data.count">Showing results {{result.data.offset+1}} to {{result.data.offset + result.data.count}}
+                                of
+                                {{result.data.total}}
+                            </li>
+                            <li v-else>No Results found</li>
+                        </ul>
+                    </li>
+                    <li :key="character.id" v-for="(character,index) in result.data.results">
+                        <!--suppress HtmlUnknownTarget -->
+                        {{index+1}} &mdash;
+                        <img :src="`${character.thumbnail.path}/portrait_small.jpg`" alt="thumbnail image">
+                        {{character.id}} - {{character.name}}
+                        <p><span v-html="character.description"/></p>
+                        <ul>
+                            <li> Comics: {{character.comics.available}}</li>
+                            <li> Series: {{character.series.available}}</li>
+                            <li> Stories: {{character.stories.available}}</li>
+                            <li> events: {{character.events.available}}</li>
+                            <li :key="url.type" v-for="url in character.urls">
+                                {{url.type}} <a :href="url.url" target="_blank">{{url.url}}</a>
+                            </li>
+                        </ul>
+                        <!--                <pre>{{character}}</pre>-->
+                    </li>
+                </ul>
+            </v-col>
+
+            <v-col cols="3">
+                <h3>Comics</h3>
+                <ul>
+                    <li v-if="result.attributionHTML"><span v-html="result.attributionHTML"/>
+                        <ul>
+                            <li v-if="result.data.count">Showing results {{result.data.offset+1}} to {{result.data.offset + result.data.count}}
+                                of
+                                {{result.data.total}}
+                            </li>
+                            <li v-else>No Results found</li>
+                        </ul>
+                    </li>
+                    <li :key="character.id" v-for="character in result.data.results">
+                        <!--suppress HtmlUnknownTarget -->
+                        <img :src="`${character.thumbnail.path}/portrait_small.jpg`" alt="thumbnail image">
+                        {{character.id}} - {{character.name}}
+                        <p><span v-html="character.description"/></p>
+                        <ul>
+                            <li> Comics: {{character.comics.available}}</li>
+                            <li> Series: {{character.series.available}}</li>
+                            <li> Stories: {{character.stories.available}}</li>
+                            <li> events: {{character.events.available}}</li>
+                            <li :key="url.type" v-for="url in character.urls">
+                                {{url.type}} <a :href="url.url" target="_blank">{{url.url}}</a>
+                            </li>
+                        </ul>
+                        <!--                <pre>{{character}}</pre>-->
+                    </li>
+                </ul>
+            </v-col>
+
+            <v-col cols="3">
+                <h3>Events</h3>
+            </v-col>
+
+            <v-col cols="3">
+                <h3>Stories</h3>
+            </v-col>
+
+
+            <v-col class="mb-4">
+                <h3 class="display-2 font-weight-bold mb-3">
+                    Welcome to Vuetify
+                </h3>
+
+                <p class="subheading font-weight-regular">
+                    For help and collaboration with other Vuetify developers,
+                    <br>please join our online
+                    <a
+                            href="https://community.vuetifyjs.com"
+                            target="_blank"
+                    >Discord Community</a>
+                </p>
+            </v-col>
+
+            <v-col
+                    class="mb-5"
+                    cols="12"
+            >
+                <h2 class="headline font-weight-bold mb-3">
+                    What's next?
+                </h2>
+
+                <v-row justify="center">
+                    <a
+                            :href="next.href"
+                            :key="i"
+                            class="subheading mx-3"
+                            target="_blank"
+                            v-for="(next, i) in whatsNext"
+                    >
+                        {{ next.text }}
+                    </a>
+                </v-row>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
@@ -50,22 +154,8 @@
         props: {
             msg: String
         },
-        data() {
-            return {
-                one: "two",
-                apiKey: "b51a816f55c2b752fe029e625cd2d81b",
-                endpoint: "https://gateway.marvel.com",
-                name: "Spider",
-                result: {
-                    data: {
-                        results: []
-                    }
-                }
-            }
-        },
         methods: {
             search() {
-
                 if (!this.name) {
                     return;
                 }
@@ -84,23 +174,40 @@
 
                 this.name = "";
             }
-        }
+        },
+        data: () => ({
+            apiKey: "b51a816f55c2b752fe029e625cd2d81b",
+            endpoint: "https://gateway.marvel.com",
+            name: "Spider",
+            result: {
+                data: {
+                    results: []
+                }
+            },
+            whatsNext: [
+                {
+                    text: 'Explore components',
+                    href: 'https://vuetifyjs.com/components/api-explorer',
+                },
+                {
+                    text: 'Select a layout',
+                    href: 'https://vuetifyjs.com/layout/pre-defined',
+                },
+                {
+                    text: 'Frequently Asked Questions',
+                    href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
+                },
+            ],
+        }),
     }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-
-    .hello .searchResults {
-        text-align: left;
+<style scoped="true">
+    .helloworld {
+        word-break: break-word;
     }
 
-    h3 {
-        margin: 40px 0 0;
-    }
-
-
-    a {
-        color: #42b983;
+    ul {
+        list-style: none
     }
 </style>
