@@ -26,7 +26,8 @@
                 />
             </v-col>
             <v-col cols="2">
-                <v-btn @click="search"
+                <v-btn :disabled="!this.name"
+                       @click="search"
                        class="primary"
                 >Search
                 </v-btn>
@@ -37,9 +38,11 @@
 
         <v-row>
 
-            <v-col cols="3">
+            <v-col cols="6">
 
-                <h3>Characters</h3>
+                <h3>Characters <v-icon v-if="characterResults.loading">mdi-loading mdi-spin</v-icon> </h3>
+                <h5>{{characterSearchMessage}}</h5>
+
                 <ul>
                     <li v-if="characterResults.attributionHTML"><span v-html="characterResults.attributionHTML"/>
                         <ul>
@@ -89,8 +92,9 @@
                 </ul>
             </v-col>
 
-            <v-col cols="3">
-                <h3>Series</h3>
+            <v-col cols="6">
+                <h3>Series  <v-icon v-if="comicResults.loading">mdi-loading mdi-spin</v-icon></h3>
+                <h5>{{comicSearchMessage}}</h5>
                 <ul>
                     <li v-if="comicResults.attributionHTML"><span v-html="comicResults.attributionHTML"/>
                         <ul>
@@ -140,14 +144,6 @@
                     </li>
                 </ul>
 
-            </v-col>
-
-            <v-col cols="3">
-                <h3>Events</h3>
-            </v-col>
-
-            <v-col cols="3">
-                <h3>Stories</h3>
             </v-col>
 
 
@@ -224,26 +220,44 @@
             },
 
             search() {
+                if (!this.name) {
+                    return;
+                }
+
                 this.characterResults = {
-                    data: {
-                        results: []
-                    }
-                };
-                this.comicResults = {
+                    loading: true,
                     data: {
                         results: []
                     }
                 };
 
-                if (!this.name) {
-                    return;
-                }
+                this.comicSearchMessage="";
+                this.comicResults = {
+                    loading: true,
+                    data: {
+                        results: []
+                    }
+                };
+
+
                 this.searchCharacters(this.name).then(json => {
+
+                    console.log("response = ",json);
+                    if (json.code===409) {
+                        this.comicResults.loading=false;
+                        this.comicSearchMessage=json.status;
+                        return;
+                    }
                     //console.log("Search Characters returned ", json);
                     this.characterResults = json;
                 });
 
                 this.searchSeries(this.name).then(json => {
+                    if (json.code===409) {
+                        this.characterResults.loading=false;
+                        this.characterSearchMessage=json.status;
+                        return;
+                    }
                     //console.log("Search Comics returned ", json);
                     this.comicResults = json;
                 });
@@ -260,11 +274,13 @@
                 width: 100,
                 height: 150,
             },
+            characterSearchMessage: "",
             characterResults: {
                 data: {
                     results: []
                 }
             },
+            comicSearchMessage: "",
             comicResults: {
                 data: {
                     results: []
