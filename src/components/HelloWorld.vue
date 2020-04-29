@@ -93,20 +93,20 @@
             </v-col>
 
             <v-col cols="6">
-                <h3>Series  <v-icon v-if="comicResults.loading">mdi-loading mdi-spin</v-icon></h3>
-                <h5>{{comicSearchMessage}}</h5>
+                <h3>Series  <v-icon v-if="seriesResults.loading">mdi-loading mdi-spin</v-icon></h3>
+                <h5>{{seriesSearchMessage}}</h5>
                 <ul>
-                    <li v-if="comicResults.attributionHTML"><span v-html="comicResults.attributionHTML"/>
+                    <li v-if="seriesResults.attributionHTML"><span v-html="seriesResults.attributionHTML"/>
                         <ul>
-                            <li v-if="comicResults.data.count">Showing characterResults {{comicResults.data.offset+1}}
-                                to {{comicResults.data.offset + comicResults.data.count}}
+                            <li v-if="seriesResults.data.count">Showing characterResults {{seriesResults.data.offset+1}}
+                                to {{seriesResults.data.offset + seriesResults.data.count}}
                                 of
-                                {{comicResults.data.total}}
+                                {{seriesResults.data.total}}
                             </li>
                             <li v-else>No Results found</li>
                         </ul>
                     </li>
-                    <li :key="comic.id" v-for="(comic,index) in comicResults.data.results">
+                    <li :key="comic.id" v-for="(comic,index) in seriesResults.data.results">
                         <!--suppress HtmlUnknownTarget -->
                         {{index+1}} &mdash;
                         {{comic.id}} - {{comic.title}}
@@ -146,42 +146,6 @@
 
             </v-col>
 
-
-            <v-col class="mb-4">
-                <h3 class="display-2 font-weight-bold mb-3">
-                    Welcome to Vuetify
-                </h3>
-
-                <p class="subheading font-weight-regular">
-                    For help and collaboration with other Vuetify developers,
-                    <br>please join our online
-                    <a
-                            href="https://community.vuetifyjs.com"
-                            target="_blank"
-                    >Discord Community</a>
-                </p>
-            </v-col>
-
-            <v-col
-                    class="mb-5"
-                    cols="12"
-            >
-                <h2 class="headline font-weight-bold mb-3">
-                    What's next?
-                </h2>
-
-                <v-row justify="center">
-                    <a
-                            :href="next.href"
-                            :key="i"
-                            class="subheading mx-3"
-                            target="_blank"
-                            v-for="(next, i) in whatsNext"
-                    >
-                        {{ next.text }}
-                    </a>
-                </v-row>
-            </v-col>
         </v-row>
     </v-container>
 </template>
@@ -192,6 +156,28 @@
         props: {
             msg: String
         },
+        data: () => ({
+            apiKey: "b51a816f55c2b752fe029e625cd2d81b",
+            endpoint: "https://gateway.marvel.com",
+            name: "Spider",
+            thumbnailSize: {
+                name: "portrait_medium",
+                width: 100,
+                height: 150,
+            },
+            characterSearchMessage: "",
+            characterResults: {
+                data: {
+                    results: []
+                }
+            },
+            seriesSearchMessage: "",
+            seriesResults: {
+                data: {
+                    results: []
+                }
+            },
+        }),
         methods: {
             searchCharacters(searchStr) {
                 const url = new URL(`${this.endpoint}/v1/public/characters`);
@@ -231,8 +217,8 @@
                     }
                 };
 
-                this.comicSearchMessage="";
-                this.comicResults = {
+                this.seriesSearchMessage="";
+                this.seriesResults = {
                     loading: true,
                     data: {
                         results: []
@@ -244,8 +230,8 @@
 
                     console.log("response = ",json);
                     if (json.code===409) {
-                        this.comicResults.loading=false;
-                        this.comicSearchMessage=json.status;
+                        this.seriesResults.loading=false;
+                        this.seriesSearchMessage=json.status;
                         return;
                     }
                     //console.log("Search Characters returned ", json);
@@ -259,48 +245,12 @@
                         return;
                     }
                     //console.log("Search Comics returned ", json);
-                    this.comicResults = json;
+                    this.seriesResults = json;
                 });
 
                 this.name = "";
             }
         },
-        data: () => ({
-            apiKey: "b51a816f55c2b752fe029e625cd2d81b",
-            endpoint: "https://gateway.marvel.com",
-            name: "Spider",
-            thumbnailSize: {
-                name: "portrait_medium",
-                width: 100,
-                height: 150,
-            },
-            characterSearchMessage: "",
-            characterResults: {
-                data: {
-                    results: []
-                }
-            },
-            comicSearchMessage: "",
-            comicResults: {
-                data: {
-                    results: []
-                }
-            },
-            whatsNext: [
-                {
-                    text: 'Explore components',
-                    href: 'https://vuetifyjs.com/components/api-explorer',
-                },
-                {
-                    text: 'Select a layout',
-                    href: 'https://vuetifyjs.com/layout/pre-defined',
-                },
-                {
-                    text: 'Frequently Asked Questions',
-                    href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-                },
-            ],
-        }),
     }
 </script>
 
