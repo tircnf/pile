@@ -56,10 +56,24 @@
                         <!--suppress HtmlUnknownTarget -->
                         {{index+1}} &mdash;
                         {{character.id}} - {{character.name}}
-                        <v-img :height="thumbnailSize.height"
-                               :src="`${character.thumbnail.path}/${thumbnailSize.name}.jpg`"
-                               :width="thumbnailSize.width"
-                               alt="thumbnail image"/>
+                        <v-tooltip right>
+                            <template v-slot:activator="{ on }">
+                                <!--suppress HtmlUnknownTarget -->
+                                <v-img
+                                        v-on="on"
+                                        :src="`${character.thumbnail.path}/${thumbnailSize.name}.jpg`"
+                                        :width="thumbnailSize.width"
+                                        :height="thumbnailSize.height"
+                                        alt="thumbnail image"/>
+                            </template>
+                            <!--suppress HtmlUnknownTarget -->
+                            <v-img
+                                    :src="`${character.thumbnail.path}.jpg`"
+                                    max-height="750"
+                                    alt="thumbnail image"/>
+
+
+                        </v-tooltip>
                         <p><span v-html="character.description"/></p>
                         <ul>
                             <li> Comics: {{character.comics.available}}</li>
@@ -225,12 +239,12 @@
                     return;
                 }
                 this.searchCharacters(this.name).then(json => {
-                    console.log("Search Characters returned ", json);
+                    //console.log("Search Characters returned ", json);
                     this.characterResults = json;
                 });
 
                 this.searchSeries(this.name).then(json => {
-                    console.log("Search Comics returned ", json);
+                    //console.log("Search Comics returned ", json);
                     this.comicResults = json;
                 });
 
