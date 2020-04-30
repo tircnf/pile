@@ -37,15 +37,14 @@
         </v-row>
 
         <v-row>
-
             <v-col cols="6">
-
                 <h3>Characters
                     <v-icon v-if="characterResults.loading">mdi-loading mdi-spin</v-icon>
                 </h3>
                 <h5>{{characterSearchMessage}}</h5>
-                <ul>
-                    <li v-if="characterResults.attributionHTML"><span v-html="characterResults.attributionHTML"/>
+                <v-list shaped>
+                    <v-list-item v-if="characterResults.attributionHTML"><span
+                            v-html="characterResults.attributionHTML"/>
                         <ul>
                             <li v-if="characterResults.data.count">Showing characterResults
                                 {{characterResults.data.offset+1}} to {{characterResults.data.offset +
@@ -55,46 +54,45 @@
                             </li>
                             <li v-else>No Results found</li>
                         </ul>
-                    </li>
-                    <li :key="character.id" v-for="(character,index) in characterResults.data.results">
-                        <v-tooltip open-delay="350"
-                                   close-delay="100"
-                                   right
-                        >
-                            <template v-slot:activator="{ on }">
-                                <!--suppress HtmlUnknownTarget -->
-                                <v-img
-                                        :height="thumbnailSize.height"
-                                        :src="`${character.thumbnail.path}/${thumbnailSize.name}.jpg`"
-                                        :width="thumbnailSize.width"
-                                        alt="thumbnail image"
-                                        class="float-left mr-4"
-                                        v-on="on"
+                    </v-list-item>
+                    <v-list-item-group v-model="selectedCharacter">
+                        <v-list-item :key="character.id" v-for="(character,index) in characterResults.data.results">
+                            <v-list-item-icon>
+                                <v-tooltip close-delay="100"
+                                           open-delay="350"
+                                           right
+                                >
+                                    <template v-slot:activator="{ on }">
+                                        <!--suppress HtmlUnknownTarget -->
+                                        <v-img
+                                                :height="thumbnailSize.height"
+                                                :src="`${character.thumbnail.path}/${thumbnailSize.name}.jpg`"
+                                                :width="thumbnailSize.width"
+                                                alt="thumbnail image"
+                                                v-on="on"
+                                        />
+                                    </template>
+                                    <!--suppress HtmlUnknownTarget -->
+                                    <v-img
+                                            :src="`${character.thumbnail.path}.jpg`"
+                                            alt="thumbnail image"
+                                            max-height="750"/>
+                                </v-tooltip>
+                            </v-list-item-icon>
 
-                                />
-                            </template>
-                            <!--suppress HtmlUnknownTarget -->
-                            <v-img
-                                    :src="`${character.thumbnail.path}.jpg`"
-                                    alt="thumbnail image"
-                                    max-height="750"/>
-
-
-                        </v-tooltip>
-
-                        <div style="min-height: 175px;">
-
-                            <!--                        {{character.id}} - -->
-                            <h5>{{index+1}} {{character.name}}</h5>
-                            <ul>
-                                <li> Comics: {{character.comics.available}}</li>
-                                <li> Series: {{character.series.available}}</li>
-                            </ul>
-                            <p><span v-html="character.description"/></p>
-                            <!--                <pre>{{character}}</pre>-->
-                        </div>
-                    </li>
-                </ul>
+                            <v-list-item-content>
+                                <div>
+                                    <h5>{{index+1}} {{character.name}}</h5>
+                                    <ul>
+                                        <li> Comics: {{character.comics.available}}</li>
+                                        <li> Series: {{character.series.available}}</li>
+                                    </ul>
+                                    <p><span v-html="character.description"/></p>
+                                </div>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list-item-group>
+                </v-list>
             </v-col>
 
             <v-col cols="6">
@@ -102,8 +100,9 @@
                     <v-icon v-if="seriesResults.loading">mdi-loading mdi-spin</v-icon>
                 </h3>
                 <h5>{{seriesSearchMessage}}</h5>
-                <ul>
-                    <li v-if="seriesResults.attributionHTML"><span v-html="seriesResults.attributionHTML"/>
+                <v-list shaped>
+                    <v-list-item v-if="seriesResults.attributionHTML"><span
+                            v-html="seriesResults.attributionHTML"/>
                         <ul>
                             <li v-if="seriesResults.data.count">Showing seriesResults
                                 {{seriesResults.data.offset+1}} to {{seriesResults.data.offset +
@@ -113,11 +112,13 @@
                             </li>
                             <li v-else>No Results found</li>
                         </ul>
-                    </li>
-                    <li :key="series.id" v-for="(series,index) in seriesResults.data.results">
-                        <v-tooltip open-delay="350"
-                                   close-delay="100"
+                    </v-list-item>
+                    <v-list-item-group v-model="selectedSeries">
+                    <v-list-item :key="series.id" v-for="(series,index) in seriesResults.data.results">
+                        <v-list-item-icon>
+                        <v-tooltip close-delay="100"
                                    left
+                                   open-delay="350"
                         >
                             <template v-slot:activator="{ on }">
                                 <!--suppress HtmlUnknownTarget -->
@@ -139,8 +140,10 @@
 
 
                         </v-tooltip>
+                        </v-list-item-icon>
 
-                        <div style="min-height: 175px;">
+                        <v-list-item-content>
+                        <div>
 
                             <!--                        {{series.id}} - -->
                             <h5>{{index+1}} {{series.title}}</h5>
@@ -151,8 +154,10 @@
                             <p><span v-html="series.description"/></p>
                             <!--                <pre>{{series}}</pre>-->
                         </div>
-                    </li>
-                </ul>
+                        </v-list-item-content>
+                    </v-list-item>
+                    </v-list-item-group>
+                </v-list>
             </v-col>
 
         </v-row>
@@ -160,6 +165,9 @@
 </template>
 
 <script>
+
+    import api from "../lib/api";
+
     export default {
         name: 'HelloWorld',
         props: {
@@ -169,6 +177,8 @@
             apiKey: "b51a816f55c2b752fe029e625cd2d81b",
             endpoint: "https://gateway.marvel.com",
             name: "Spider",
+            selectedCharacter: null,
+            selectedSeries: null,
             thumbnailSize: {
                 name: "portrait_medium",
                 width: 100,
@@ -189,29 +199,10 @@
         }),
         methods: {
             searchCharacters(searchStr) {
-                const url = new URL(`${this.endpoint}/v1/public/characters`);
-                const params = {
-                    nameStartsWith: searchStr,
-                    apikey: this.apiKey
-                };
-                //https://gateway.marvel.com/v1/public/characters?nameStartsWith=spider&apikey=b51a816f55c2b752fe029e625cd2d81b
-                Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-
-                return fetch(url)
-                    .then(response => response.json())
+                return api.searchCharacters(searchStr);
             },
-
             searchSeries(searchStr) {
-                const url = new URL(`${this.endpoint}/v1/public/series`);
-                const params = {
-                    titleStartsWith: searchStr,
-                    apikey: this.apiKey
-                };
-                //https://gateway.marvel.com/v1/public/characters?nameStartsWith=spider&apikey=b51a816f55c2b752fe029e625cd2d81b
-                Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
-
-                return fetch(url)
-                    .then(response => response.json())
+                return api.searchSeries(searchStr)
             },
 
             search() {
@@ -236,7 +227,6 @@
 
 
                 this.searchCharacters(this.name).then(json => {
-
                     console.log("response = ", json);
                     if (json.code === 409) {
                         this.seriesResults.loading = false;
@@ -260,6 +250,16 @@
                 this.name = "";
             }
         },
+        watch: {
+            selectedCharacter(newValue) {
+                const character=this.characterResults.data.results[newValue];
+                this.$router.push({name: 'character', params: {characterId:character.id.toString()}});
+            },
+            selectedSeries(newValue) {
+                const series=this.seriesResults.data.results[newValue];
+                this.$router.push({name: 'series', params: {seriesId: series.id.toString()}});
+            }
+        },
     }
 </script>
 
@@ -271,4 +271,5 @@
     ul {
         list-style: none
     }
+
 </style>
