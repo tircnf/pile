@@ -3,7 +3,7 @@
         <v-row class="text-center">
             <v-col cols="12">
                 <v-img
-                        alt="Vue logo"
+                        alt="marvel-banner"
                         contain
                         height="409"
                         src="../assets/marvel-banner.jpg"
@@ -176,7 +176,7 @@
         data: () => ({
             apiKey: "b51a816f55c2b752fe029e625cd2d81b",
             endpoint: "https://gateway.marvel.com",
-            name: "Spider",
+            name: "",
             selectedCharacter: null,
             selectedSeries: null,
             thumbnailSize: {
