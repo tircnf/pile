@@ -33,8 +33,10 @@ const routes = [
 ];
 
 const router = new VueRouter({
-    mode: 'history',
-    base: process.env.BASE_URL,
+    // uncomments these two lines to make the "#" disappear from the URL.
+    //
+    // mode: 'history',
+    //base: process.env.BASE_URL,
     routes
 });
 
