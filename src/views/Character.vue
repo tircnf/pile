@@ -1,13 +1,13 @@
 <template>
     <div>
-        <v-container>
+        <div>
             <h2>Hello
                 <v-icon v-if="!character">mdi-waiting mdi-spinner</v-icon>
                 <span v-else>{{character.name}}</span></h2>
 
         <pre>{{character}}</pre>
 
-        </v-container>
+        </div>
     </div>
 </template>
 

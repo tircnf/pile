@@ -1,14 +1,19 @@
-const apiKey= "b51a816f55c2b752fe029e625cd2d81b";
-const endpoint= "https://gateway.marvel.com";
+const apiKey = "b51a816f55c2b752fe029e625cd2d81b";
+const endpoint = "https://gateway.marvel.com";
 
-const characterMap={};
-const seriesMap={};
+const characterMap = {};
+const seriesMap = {};
 
 
-function searchCharacters(searchStr) {
+function searchCharacters(searchStr, offset, limit) {
+    offset = offset || 0;
+    limit = limit || 20;
     const url = new URL(`${endpoint}/v1/public/characters`);
     const params = {
         nameStartsWith: searchStr,
+        orderBy: "name,modified",
+        offset: offset,
+        limit: limit,
         apikey: apiKey
     };
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
@@ -18,11 +23,14 @@ function searchCharacters(searchStr) {
 }
 
 
-function searchSeries(searchStr) {
+function searchSeries(searchStr, offset, limit) {
     const url = new URL(`${endpoint}/v1/public/series`);
     const params = {
         titleStartsWith: searchStr,
-        apikey:apiKey
+        orderBy: "startYear,title",
+        offset: offset,
+        limit: limit,
+        apikey: apiKey
     };
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
@@ -39,14 +47,14 @@ function fetchCharacter(id) {
 
     const url = new URL(`${endpoint}/v1/public/characters/${id}`);
     const params = {
-        apikey:apiKey
+        apikey: apiKey
     };
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
     return fetch(url.toString())
         .then(response => response.json())
         .then(json => {
-            characterMap[id]=json.data.results[0];
+            characterMap[id] = json.data.results[0];
             return characterMap[id];
         })
 }
@@ -60,14 +68,14 @@ function fetchSeries(id) {
 
     const url = new URL(`${endpoint}/v1/public/series/${id}`);
     const params = {
-        apikey:apiKey
+        apikey: apiKey
     };
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
 
     return fetch(url.toString())
         .then(response => response.json())
         .then(json => {
-            seriesMap[id]=json.data.results[0];
+            seriesMap[id] = json.data.results[0];
             return seriesMap[id];
         })
 }
@@ -75,7 +83,7 @@ function fetchSeries(id) {
 function fetchComicsForSeries(id, offset, limit) {
     const url = new URL(`${endpoint}/v1/public/series/${id}/comics`);
     const params = {
-        apikey:apiKey,
+        apikey: apiKey,
         offset: offset,
         limit: limit,
         orderBy: "issueNumber"

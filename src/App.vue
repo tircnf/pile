@@ -6,18 +6,20 @@
                 dark
         >
             <div class="d-flex align-center">
-                Not Affiliated with Marvel Comics in any way.
+                Not Affiliated with Marvel.
             </div>
 
             <v-spacer/>
 
+
+
             <v-btn
-                    href="https://github.com/tircnf/pile"
+                    href="http://marvel.com"
                     target="_blank"
                     text
             >
 
-                <span class="mr-2">Link to Somewhere</span>
+                <span class="mr-2">Data provided by Marvel. &copy; 2020 MARVEL</span>
                 <v-icon>mdi-open-in-new</v-icon>
             </v-btn>
         </v-app-bar>
@@ -29,9 +31,11 @@
                 <router-link to="/about">About</router-link>
             </div>
 
-            <keep-alive>
-                <router-view/>
-            </keep-alive>
+            <v-container>
+                <keep-alive>
+                    <router-view/>
+                </keep-alive>
+            </v-container>
 
         </v-content>
     </v-app>

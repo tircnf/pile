@@ -1,39 +1,39 @@
 <template>
     <div>
-        <v-container>
-            <h2>Hello
-                <v-icon v-if="!series">mdi-waiting mdi-spinner</v-icon>
-                <span v-else>{{series.title}}</span>
-            </h2>
+        <h2>Hello
+            <v-icon v-if="!series">mdi-waiting mdi-spinner</v-icon>
+            <span v-else>{{series.title}}</span>
+        </h2>
 
-            <div v-if="series">
-                <p>{{series.description}}</p>
+        <div v-if="series">
+            <p>{{series.description}}</p>
 
-                <v-row v-if="comicList.data">
-                    <v-col :key="comic.id" cols="2" v-for="comic in comicList.data.results">
-                        {{comic.title}}
+            <v-row v-if="comicList.data">
+                <v-col :key="comic.id" cols="2" v-for="comic in comicList.data.results">
+                    {{comic.title}}
 
-                        <!--suppress HtmlUnknownTarget -->
-<!--                                :height="thumbnailSize.height"-->
-<!--                                :width="thumbnailSize.width"-->
-                        <v-img
-                                :src="`${comic.thumbnail.path}/${thumbnailSize.name}.jpg`"
-                                alt="thumbnail image"
-                        />
-<!--                        <pre style="word-break: break-word">{{comic}}</pre>-->
+                    <!--suppress HtmlUnknownTarget -->
+                    <!--                                :height="thumbnailSize.height"-->
+                    <!--                                :width="thumbnailSize.width"-->
+                    <v-img
+                            :src="`${comic.thumbnail.path}/${thumbnailSize.name}.jpg`"
+                            alt="thumbnail image"
+                    />
+                    <!--                        <pre style="word-break: break-word">{{comic}}</pre>-->
 
-                    </v-col>
-                </v-row>
+                </v-col>
+            </v-row>
 
-                <v-btn @click="fetchMoreComics()">Fetch More Comics  <v-icon v-if="comicsLoading">mdi-loading mdi-spin</v-icon></v-btn>
-            </div>
+            <v-btn @click="fetchMoreComics()">Fetch More Comics
+                <v-icon v-if="comicsLoading">mdi-loading mdi-spin</v-icon>
+            </v-btn>
+        </div>
 
-<!--            This is my comicList.-->
-<!--            <pre>{{comicList}}</pre>-->
-<!---->
-<!--            <pre>{{series}}</pre>-->
+        <!--            This is my comicList.-->
+        <!--            <pre>{{comicList}}</pre>-->
+        <!---->
+        <!--            <pre>{{series}}</pre>-->
 
-        </v-container>
     </div>
 </template>
 
@@ -72,12 +72,12 @@
                     return;
                 }
                 // load some comics from the series.
-                this.comicsLoading=true;
+                this.comicsLoading = true;
 
                 api.fetchComicsForSeries(this.series.id, this.comicOffset, this.comicLimit)
                     .then(json => {
-                        this.comicsLoading=false;
-                        if (! this.comicList.code) {
+                        this.comicsLoading = false;
+                        if (!this.comicList.code) {
                             this.comicList = json;
                         } else {
                             this.comicList.data.results.push(...(json.data.results))
