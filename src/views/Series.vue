@@ -9,7 +9,7 @@
             <p>{{series.description}}</p>
 
             <v-row v-if="comicList.data">
-                <v-col :key="comic.id" cols="2" v-for="comic in comicList.data.results">
+                <v-col :key="comic.id"  cols="4" md="3" lg="2" v-for="comic in comicList.data.results">
                     {{comic.title}}
 
                     <!--suppress HtmlUnknownTarget -->
