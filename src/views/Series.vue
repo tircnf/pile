@@ -2,76 +2,114 @@
     <div>
 
         <v-row>
+            <v-col cols="1"/> <!-- offset one column -->
             <v-col cols="3">
-                <div v-if="previous">
-                    <v-btn
+                <v-hover
+                        open-delay="50"
+                        v-slot:default="{ hover }"
+                >
+                    <v-card
+                            :elevation="hover ? 20 : 2"
                             @click='$router.push({name: "series", params: {seriesId: previous.id.toString()}})'
-                            class="primary">
-                        {{previous.title}}
-                    </v-btn>
-                    <!--suppress HtmlUnknownTarget -->
-                    <v-img :src="`${previous.thumbnail.path}/portrait_medium.jpg`"
-                           :width="100"
-                           alt="thumbnail image"
-                           class="mt-3 align-center"
-                    />
-                </div>
+                            v-if="previous"
+                            :dark="hover"
+                    >
+
+                        <v-card-title>
+                            Previous Series
+                        </v-card-title>
+                        <v-card-subtitle>
+                            {{previous.title}}
+                        </v-card-subtitle>
+                        <!--suppress HtmlUnknownTarget -->
+                        <v-img :src="`${previous.thumbnail.path}/standard_xlarge.jpg`"
+                               alt="thumbnail image"
+                               class="mt-3 v-chip--clickable"
+                        />
+                    </v-card>
+                </v-hover>
             </v-col>
 
-            <v-col cols="6">
-                <h2>Title:
-                    <v-icon v-if="!series">mdi-waiting mdi-spinner</v-icon>
-                    <span v-else>{{series.title}}</span>
-                </h2>
-                <div v-if="series">
-                    <ul>
-                        <li> Active Years : {{series.startYear}} - {{series.endYear}}</li>
-                        <li> Comics: {{series.comics.available}}</li>
-                        <li> Characters: {{series.characters.available}}</li>
-                        <li> Events: {{series.events.available}}</li>
-                    </ul>
-                    <!--suppress HtmlUnknownTarget -->
-                    <v-img :src="`${series.thumbnail.path}/portrait_uncanny.jpg`"
-                           :width="300"
-                           alt="thumbnail image"
-                           class="mt-3 align-center"
-                    />
-                </div>
+            <v-col cols="4">
+                <v-card>
+                    <h2>Title:
+                        <v-icon v-if="!series">mdi-waiting mdi-spinner</v-icon>
+                        <span v-else>{{series.title}}</span>
+                    </h2>
+                    <div v-if="series">
+                        <ul>
+                            <li> Active Years : {{series.startYear}} - {{series.endYear}}</li>
+                            <li> Comics: {{series.comics.available}}</li>
+                            <li> Characters: {{series.characters.available}}</li>
+                            <li> Events: {{series.events.available}}</li>
+                        </ul>
+                        <!--suppress HtmlUnknownTarget -->
+                        <v-img :src="`${series.thumbnail.path}/portrait_uncanny.jpg`"
+                               alt="thumbnail image"
+                               class="mt-3"
+                        />
+                    </div>
+                </v-card>
             </v-col>
 
 
             <v-col cols="3">
-                <div v-if="next">
-                    <v-btn
+                <v-hover
+                        open-delay="50"
+                        v-slot:default="{ hover }"
+                >
+                    <v-card
+                            :elevation="hover ? 20 : 2"
                             @click='$router.push({name: "series", params: {seriesId: next.id.toString()}})'
-                            class="primary">
-                        {{next.title}}
-                    </v-btn>
-                    <!--suppress HtmlUnknownTarget -->
-                    <v-img :src="`${next.thumbnail.path}/portrait_medium.jpg`"
-                           :width="100"
-                           alt="thumbnail image"
-                           class="mt-3 align-center"
-                    />
-                </div>
+                            v-if="next"
+                            :dark="hover"
+                    >
+
+                        <v-card-title>
+                            Next Series
+                        </v-card-title>
+                        <v-card-subtitle>
+                            {{next.title}}
+                        </v-card-subtitle>
+                        <!--suppress HtmlUnknownTarget -->
+                        <v-img :src="`${next.thumbnail.path}/standard_xlarge.jpg`"
+                               alt="thumbnail image"
+                               class="mt-3 v-chip--clickable"
+                        />
+                    </v-card>
+                </v-hover>
             </v-col>
         </v-row>
 
         <div v-if="series">
-            <p>{{series.description}}</p>
+            <v-row>
+                <v-col cols="3"/>
+                <v-col cols="6">
+                    <p>{{series.description}}</p>
+                </v-col>
+            </v-row>
 
             <v-row v-if="comicList.data">
                 <v-col :key="comic.id" cols="4" lg="2" md="3" v-for="comic in comicList.data.results">
-                    {{comic.title}}
-                    <!--suppress HtmlUnknownTarget -->
-                    <!--                                :height="thumbnailSize.height"-->
-                    <!--                                :width="thumbnailSize.width"-->
-                    <v-img
-                            :src="`${comic.thumbnail.path}/${thumbnailSize.name}.jpg`"
-                            alt="thumbnail image"
-                    />
-                    <!--                        <pre style="word-break: break-word">{{comic}}</pre>-->
-
+                    <v-hover
+                            open-delay="50"
+                            v-slot:default="{ hover }"
+                    >
+                        <v-card
+                                :elevation="hover ? 20 : 2"
+                                @click='$router.push(`/comics/${comic.id}`)'
+                        >
+                            <v-card-title>{{comic.title}}</v-card-title>
+                            <!--suppress HtmlUnknownTarget -->
+                            <!--                                :height="thumbnailSize.height"-->
+                            <!--                                :width="thumbnailSize.width"-->
+                            <v-img
+                                    :src="`${comic.thumbnail.path}/${thumbnailSize.name}.jpg`"
+                                    alt="thumbnail image"
+                            />
+                            <!--                        <pre style="word-break: break-word">{{comic}}</pre>-->
+                        </v-card>
+                    </v-hover>
                 </v-col>
             </v-row>
 
@@ -130,7 +168,7 @@
                             this.comicList.data.results.push(...(json.data.results))
                         }
                         this.comicOffset = this.comicOffset + this.comicLimit;
-                        this.comicLimit=Math.min(60, this.comicLimit+24); // cap it at 60 comics at a time.
+                        this.comicLimit = Math.min(60, this.comicLimit + 24); // cap it at 60 comics at a time.
                     })
             },
             getId(url) {
@@ -149,7 +187,7 @@
 
                     this.comicList = {};
                     this.comicOffset = 0;
-                    this.comicLimit=12;
+                    this.comicLimit = 12;
 
                     this.fetchSeries(newValue).then(json => {
                         this.series = json;
