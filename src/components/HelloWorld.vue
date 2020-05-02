@@ -198,6 +198,10 @@
                 //width: "150",
                 //height: "225",
 
+                // name: "portrait_incredible",
+                // width: 216,
+                // height: 324
+
             },
             characterSearchMessage: "",
             characterResults: {
@@ -304,8 +308,10 @@
         },
         watch: {
             selectedCharacter(newValue) {
-                const character = this.characterResults.data.results[newValue];
-                this.$router.push({name: 'character', params: {characterId: character.id.toString()}});
+                if (newValue!==undefined && newValue !== null) {
+                    const character = this.characterResults.data.results[newValue];
+                    this.$router.push({name: 'character', params: {characterId: character.id.toString()}});
+                }
             },
             selectedSeries(newValue) {
                 const series = this.seriesResults.data.results[newValue];
