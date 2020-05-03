@@ -2,40 +2,62 @@
     <div>
 
         <v-row>
-            <v-col cols="1"/> <!-- offset one column -->
+            <v-col cols="0" sm="1"/> <!-- offset one column -->
             <v-col cols="3">
+
+                <a
+                        @click='$router.push({name: "series", params: {seriesId: previous.id.toString()}})'
+                        class="hidden-sm-and-up"
+                        v-if="previous"
+                >{{previous.title}}</a>
+                <!--
+                there is a weird issue with hover.
+                Search for Thor, choose 1966-1996.
+                hover over and click the previous value.
+                previous value now disappers because Journey into mystery doesn't have a previous.
+                Now click "Next" and go back to the 1966 one.
+                The "Previous" card loads with hover=true (and dark theme).
+                It is cached somehow, and never notices the mouse leaving.
+                -->
                 <v-hover
                         open-delay="50"
                         v-slot:default="{ hover }"
                 >
-                    <v-card
-                            :elevation="hover ? 20 : 2"
-                            @click='$router.push({name: "series", params: {seriesId: previous.id.toString()}})'
-                            v-if="previous"
-                            :dark="hover"
-                    >
+                    <div>
+                        <v-card :dark="hover"
+                                :elevation="hover ? 20 : 2"
+                                @click='$router.push({name: "series", params: {seriesId: previous.id.toString()}})'
+                                class="hidden-xs-only"
+                                v-if="previous"
+                        >
 
-                        <v-card-title>
-                            Previous Series
-                        </v-card-title>
-                        <v-card-subtitle>
-                            {{previous.title}}
-                        </v-card-subtitle>
-                        <!--suppress HtmlUnknownTarget -->
-                        <v-img :src="`${previous.thumbnail.path}/standard_xlarge.jpg`"
-                               alt="thumbnail image"
-                               class="mt-3 v-chip--clickable"
-                        />
-                    </v-card>
+                            <v-card-title>
+                                Previous {{hover}}
+                            </v-card-title>
+                            <v-card-subtitle>
+                                {{previous.title}}
+                            </v-card-subtitle>
+                            <!--suppress HtmlUnknownTarget -->
+                            <v-img :src="`${previous.thumbnail.path}/standard_xlarge.jpg`"
+                                   alt="thumbnail image"
+                                   class="mt-3 v-chip--clickable"
+                            />
+                        </v-card>
+                    </div>
                 </v-hover>
             </v-col>
 
-            <v-col cols="4">
+            <v-col cols="6" sm="4">
                 <v-card>
-                    <h2>Title:
+                    <v-card-title>
                         <v-icon v-if="!series">mdi-waiting mdi-spinner</v-icon>
                         <span v-else>{{series.title}}</span>
-                    </h2>
+                    </v-card-title>
+
+                    <v-card-subtitle>
+                        {{series.description}}
+                    </v-card-subtitle>
+
                     <div v-if="series">
                         <ul>
                             <li> Active Years : {{series.startYear}} - {{series.endYear}}</li>
@@ -54,43 +76,44 @@
 
 
             <v-col cols="3">
+                <a
+                        @click='$router.push({name: "series", params: {seriesId: next.id.toString()}})'
+                        class="hidden-sm-and-up"
+                        v-if="next"
+                >{{next.title}}</a>
                 <v-hover
                         open-delay="50"
                         v-slot:default="{ hover }"
                 >
-                    <v-card
-                            :elevation="hover ? 20 : 2"
-                            @click='$router.push({name: "series", params: {seriesId: next.id.toString()}})'
-                            v-if="next"
-                            :dark="hover"
-                    >
+                    <div>
+                        <v-card
+                                :dark="hover"
+                                :elevation="hover ? 20 : 2"
+                                @click='$router.push({name: "series", params: {seriesId: next.id.toString()}})'
+                                class="hidden-xs-only"
+                                v-if="next"
+                        >
 
-                        <v-card-title>
-                            Next Series
-                        </v-card-title>
-                        <v-card-subtitle>
-                            {{next.title}}
-                        </v-card-subtitle>
-                        <!--suppress HtmlUnknownTarget -->
-                        <v-img :src="`${next.thumbnail.path}/standard_xlarge.jpg`"
-                               alt="thumbnail image"
-                               class="mt-3 v-chip--clickable"
-                        />
-                    </v-card>
+                            <v-card-title>
+                                Next {{hover}}
+                            </v-card-title>
+                            <v-card-subtitle>
+                                {{next.title}}
+                            </v-card-subtitle>
+                            <!--suppress HtmlUnknownTarget -->
+                            <v-img :src="`${next.thumbnail.path}/standard_xlarge.jpg`"
+                                   alt="thumbnail image"
+                                   class="mt-3 v-chip--clickable"
+                            />
+                        </v-card>
+                    </div>
                 </v-hover>
             </v-col>
         </v-row>
 
         <div v-if="series">
-            <v-row>
-                <v-col cols="3"/>
-                <v-col cols="6">
-                    <p>{{series.description}}</p>
-                </v-col>
-            </v-row>
-
             <v-row v-if="comicList.data">
-                <v-col :key="comic.id" cols="4" lg="2" md="3" v-for="comic in comicList.data.results">
+                <v-col :key="comic.id" cols="6" sm="4" md="3"  lg="2" v-for="comic in comicList.data.results">
                     <v-hover
                             open-delay="50"
                             v-slot:default="{ hover }"
