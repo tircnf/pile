@@ -27,7 +27,7 @@ function searchSeries(searchStr, offset, limit) {
     const url = new URL(`${endpoint}/v1/public/series`);
     const params = {
         titleStartsWith: searchStr,
-        orderBy: "startYear,title",
+        orderBy: "title,startYear",
         offset: offset,
         limit: limit,
         apikey: apiKey
