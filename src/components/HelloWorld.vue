@@ -93,6 +93,7 @@
                                     <ul class="mb-3">
                                         <li> Comics: {{character.comics.available}}</li>
                                         <li> Series: {{character.series.available}}</li>
+                                        <li> Events: {{character.events.available}}</li>
                                     </ul>
                                     <p><span v-html="character.description"/></p>
                                 </div>
@@ -143,6 +144,7 @@
                                     <ul class="mb-3">
                                         <li> Comics: {{series.comics.available}}</li>
                                         <li> Characters: {{series.characters.available}}</li>
+                                        <li> Events: {{series.events.available}}</li>
                                     </ul>
                                     <p><span v-html="series.description"/></p>
                                     <!--                <pre>{{series}}</pre>-->
