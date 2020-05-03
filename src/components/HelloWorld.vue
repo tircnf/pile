@@ -36,7 +36,7 @@
 
 
         </v-row>
-        <Breakpoints/>
+<!--        <Breakpoints/>-->
         <v-row>
             <v-col cols="12" md="6">
                 <h3>Characters
@@ -163,11 +163,11 @@
 <script>
 
     import api from "../lib/api";
-    import Breakpoints from "./Breakpoints";
+    // import Breakpoints from "./Breakpoints";
 
     export default {
         name: 'HelloWorld',
-        components: {Breakpoints},
+        // components: {Breakpoints},
         props: {
             msg: String
         },
@@ -262,7 +262,7 @@
 
 
                 this.searchCharacters(this.name).then(json => {
-                    console.log("response = ", json);
+                    // console.log("response = ", json);
                     if (json.code === 409) {
                         this.seriesResults.loading = false;
                         this.seriesSearchMessage = json.status;

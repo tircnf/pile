@@ -6,7 +6,8 @@
                 dark
         >
             <div class="d-flex align-center">
-                Not Affiliated with Marvel.
+<!--                Not Affiliated with Marvel.-->
+                <Breakpoints/>
             </div>
 
             <v-spacer/>
@@ -44,10 +45,12 @@
 <script>
     // import HelloWorld from './components/HelloWorld';
 
+    import Breakpoints from "./components/Breakpoints";
     export default {
         name: 'App',
 
         components: {
+            Breakpoints
             // HelloWorld,
         },
 
