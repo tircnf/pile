@@ -1,16 +1,5 @@
 <template>
     <div class="helloworld">
-        <v-row class="text-center">
-            <v-col cols="12">
-                <v-img
-                        alt="marvel-banner"
-                        contain
-                        height="409"
-                        src="../assets/marvel-banner.jpg"
-
-                />
-            </v-col>
-        </v-row>
 
         <v-row>
             <v-col cols="12">
@@ -168,7 +157,7 @@
     // import Breakpoints from "./Breakpoints";
 
     export default {
-        name: 'HelloWorld',
+        name: 'GenericSearch',
         // components: {Breakpoints},
         props: {
             msg: String
