@@ -35,10 +35,12 @@
 
         <div v-if="character">
             <v-card>
+                <v-card-title>
                     <v-icon v-if="!character">mdi-waiting mdi-spinner</v-icon>
                     <span v-else>{{character.name}}</span>
+                </v-card-title>
 
-                <v-card-title>{{character.description}}</v-card-title>
+                <v-card-subtitle v-html="character.description"/>
                 <!--suppress HtmlUnknownTarget -->
                 <v-img
                         :src="`${character.thumbnail.path}.jpg`"
