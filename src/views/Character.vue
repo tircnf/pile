@@ -33,58 +33,7 @@
         </v-card>
 
 
-        <label v-if="characterTotal">showing 1 - {{Math.min(characterOffset,characterTotal)}} of {{characterTotal}}</label>
-
-        <v-row>
-            <v-col cols="12">
-                <h3>Characters
-                    <v-icon v-if="loading">mdi-loading mdi-spin</v-icon>
-                </h3>
-                <v-list shaped>
-                    <v-list-item-group v-model="selectedCharacter">
-                        <v-list-item :key="character.id" v-for="(character,index) in characterList">
-                            <v-list-item-icon>
-                                <!--suppress HtmlUnknownTarget -->
-<!--                                <v-img-->
-<!--                                        :src="`${character.thumbnail.path}/standard_large.jpg`"-->
-<!--                                        :alt="`thumbnail image for {{character.name}}`"-->
-<!--                                />-->
-                                <v-img
-                                        :src="`${character.thumbnail.path}/landscape_large.jpg`"
-                                        :alt="`thumbnail image for {{character.name}}`"
-                                        width="190"
-                                        height="140"
-                                />
-<!--                                <v-img-->
-<!--                                        :src="`${character.thumbnail.path}/portrait_large.jpg`"-->
-<!--                                        :alt="`thumbnail image for {{character.name}}`"-->
-<!--                                />-->
-                            </v-list-item-icon>
-
-                            <v-list-item-content>
-                                <div>
-                                    <h5>{{index+1}} {{character.name}}</h5>
-                                    <ul class="mb-3">
-                                        <li> Comics: {{character.comics.available}}</li>
-                                        <li> Series: {{character.series.available}}</li>
-                                        <li> Events: {{character.events.available}}</li>
-                                    </ul>
-                                    <p><span v-html="character.description"/></p>
-                                </div>
-                            </v-list-item-content>
-                        </v-list-item>
-                    </v-list-item-group>
-                </v-list>
-                <v-btn v-if="characterOffset < characterTotal && characterOffset > 0"
-                        @click="loadMoreCharacters"
-                       class="primary"
-                >
-                    Load More Characters
-                    <v-icon v-if="loading">mdi-loading mdi-spin</v-icon>
-                </v-btn>
-                <label v-if="characterOffset >= characterTotal && characterTotal">Search Complete.</label>
-            </v-col>
-
+        <div v-if="characterId">
             <div>
                 <h2>Hello
                     <v-icon v-if="!character">mdi-waiting mdi-spinner</v-icon>
@@ -93,7 +42,63 @@
                 <pre style="word-break: break-word">{{character}}</pre>
 
             </div>
-        </v-row>
+        </div>
+        <div v-else>
+
+            <label v-if="characterTotal">showing 1 - {{Math.min(characterOffset,characterTotal)}} of {{characterTotal}}
+                {{selectedCharacter}}</label>
+
+            <v-row>
+                <v-col cols="12">
+                    <h3>Characters
+                        <v-icon v-if="loading">mdi-loading mdi-spin</v-icon>
+                    </h3>
+                    <v-list shaped>
+                        <v-list-item-group v-model="selectedCharacter">
+                            <v-list-item :key="character.id" v-for="(character,index) in characterList">
+                                <v-list-item-icon>
+                                    <!--suppress HtmlUnknownTarget -->
+                                    <!--                                <v-img-->
+                                    <!--                                        :src="`${character.thumbnail.path}/standard_large.jpg`"-->
+                                    <!--                                        :alt="`thumbnail image for {{character.name}}`"-->
+                                    <!--                                />-->
+                                    <v-img
+                                            :alt="`thumbnail image for {{character.name}}`"
+                                            :src="`${character.thumbnail.path}/landscape_large.jpg`"
+                                            height="140"
+                                            width="190"
+                                    />
+                                    <!--                                <v-img-->
+                                    <!--                                        :src="`${character.thumbnail.path}/portrait_large.jpg`"-->
+                                    <!--                                        :alt="`thumbnail image for {{character.name}}`"-->
+                                    <!--                                />-->
+                                </v-list-item-icon>
+
+                                <v-list-item-content>
+                                    <div>
+                                        <h5>{{index+1}} {{character.name}}</h5>
+                                        <ul class="mb-3">
+                                            <li> Comics: {{character.comics.available}}</li>
+                                            <li> Series: {{character.series.available}}</li>
+                                            <li> Events: {{character.events.available}}</li>
+                                        </ul>
+                                        <p><span v-html="character.description"/></p>
+                                    </div>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                    <v-btn @click="loadMoreCharacters"
+                           class="primary"
+                           v-if="characterOffset < characterTotal && characterOffset > 0"
+                    >
+                        Load More Characters
+                        <v-icon v-if="loading">mdi-loading mdi-spin</v-icon>
+                    </v-btn>
+                    <label v-if="characterOffset >= characterTotal && characterTotal">Search Complete.</label>
+                </v-col>
+            </v-row>
+        </div>
     </div>
 </template>
 
@@ -124,9 +129,9 @@
                 return api.searchCharacters(this.searchString, this.characterOffset, this.characterLimit)
                     .then(json => {
                         this.characterList.push(...json.data.results);
-                        this.characterOffset+=this.characterLimit;
-                        this.characterLimit=Math.min(100, this.characterLimit+20); // grab 20 extra next time.
-                        this.loading=false;
+                        this.characterOffset += this.characterLimit;
+                        this.characterLimit = Math.min(100, this.characterLimit + 20); // grab 20 extra next time.
+                        this.loading = false;
                         return json;
                     })
 
@@ -139,14 +144,16 @@
                     return;
                 }
 
+                this.$router.push({name: "character"});
+
                 this.searchString = this.name;
                 this.searching = true;
 
                 this.characterList = [];
                 this.characterTotal = null;
 
-                this.characterOffset=0;
-                this.characterLimit=70;
+                this.characterOffset = 0;
+                this.characterLimit = 70;
                 this.loadMoreCharacters()
                     .then(json => {
                         this.searching = false;
@@ -164,6 +171,11 @@
                         .then(json => {
                             this.character = json;
                         })
+                }
+            },
+            selectedCharacter: {
+                handler: function (newValue) {
+                    this.$router.push({name: "character", params: {characterId: this.characterList[newValue].id}})
                 }
             }
         }
