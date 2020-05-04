@@ -1,10 +1,8 @@
 <template>
     <div>
-
         <v-row>
             <v-col cols="0" sm="1"/> <!-- offset one column -->
             <v-col cols="3">
-
                 <a
                         @click='$router.push({name: "series", params: {seriesId: previous.id.toString()}})'
                         class="hidden-sm-and-up"
@@ -47,7 +45,7 @@
                 </v-hover>
             </v-col>
 
-            <v-col cols="6" sm="4">
+            <v-col v-if="series" cols="6" sm="4">
                 <v-card>
                     <v-card-title>
                         <v-icon v-if="!series">mdi-waiting mdi-spinner</v-icon>
