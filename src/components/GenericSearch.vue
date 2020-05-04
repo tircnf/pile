@@ -163,8 +163,6 @@
             msg: String
         },
         data: () => ({
-            apiKey: "b51a816f55c2b752fe029e625cd2d81b",
-            endpoint: "https://gateway.marvel.com",
             name: "",
             selectedCharacter: null,
             selectedSeries: null,
