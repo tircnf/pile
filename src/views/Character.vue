@@ -33,15 +33,22 @@
         </v-card>
 
 
-        <div v-if="characterId">
-            <div>
-                <h2>Hello
+        <div v-if="character">
+            <v-card>
                     <v-icon v-if="!character">mdi-waiting mdi-spinner</v-icon>
-                    <span v-else>{{character.name}}</span></h2>
+                    <span v-else>{{character.name}}</span>
+
+                <v-card-title>{{character.description}}</v-card-title>
+                <!--suppress HtmlUnknownTarget -->
+                <v-img
+                        :src="`${character.thumbnail.path}.jpg`"
+                        max-height="700px"
+                        contain
+                />
 
                 <pre style="word-break: break-word">{{character}}</pre>
 
-            </div>
+            </v-card>
         </div>
         <div v-else>
 
@@ -67,6 +74,7 @@
                                             :src="`${character.thumbnail.path}/landscape_large.jpg`"
                                             height="140"
                                             width="190"
+                                            contain
                                     />
                                     <!--                                <v-img-->
                                     <!--                                        :src="`${character.thumbnail.path}/portrait_large.jpg`"-->
@@ -144,7 +152,10 @@
                     return;
                 }
 
-                this.$router.push({name: "character"});
+                // if we have a selected character, remove it.
+                if (this.characterId) {
+                    this.$router.push({name: "character"});
+                }
 
                 this.searchString = this.name;
                 this.searching = true;
@@ -166,16 +177,23 @@
                 immediate: true,
                 handler: function (newValue) {
                     this.character = null;
+                    if (newValue) {
 
-                    api.fetchCharacter(newValue)
-                        .then(json => {
-                            this.character = json;
-                        })
+                        api.fetchCharacter(newValue)
+                            .then(json => {
+                                this.character = json;
+                            })
+                    }
                 }
             },
             selectedCharacter: {
                 handler: function (newValue) {
-                    this.$router.push({name: "character", params: {characterId: this.characterList[newValue].id}})
+                    if (newValue !== undefined) {
+                        this.$router.push({
+                            name: "character",
+                            params: {characterId: this.characterList[newValue].id.toString()}
+                        })
+                    }
                 }
             }
         }
