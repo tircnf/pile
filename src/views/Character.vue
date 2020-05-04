@@ -1,13 +1,99 @@
 <template>
     <div>
-        <div>
-            <h2>Hello
-                <v-icon v-if="!character">mdi-waiting mdi-spinner</v-icon>
-                <span v-else>{{character.name}}</span></h2>
 
-        <pre>{{character}}</pre>
+        <v-card>
+            <v-card-title>Character Search</v-card-title>
+            <v-card-subtitle>Enter the first few letters of the Marvel Character. Press 'enter' to run the serach.
+            </v-card-subtitle>
+            <v-card-text>
 
-        </div>
+                <div class="d-flex flex-no-wrap">
+                    <v-avatar
+                            class="mr-5 mt-1"
+                            tile
+                            xsize="125"
+
+                    >
+                        <v-img src="../assets/marvel-banner.jpg"
+                        />
+                    </v-avatar>
+                    <v-text-field
+                            :name="new Date().toString() + Math.random()"
+                            :outlined="true"
+                            @keyup.enter="search"
+                            v-model="name"
+                    />
+
+                    <v-btn @click="search" class="primary mt-2 ml-2">
+                        Search
+                        <v-icon v-if="searching">mdi-loading mdi-spin</v-icon>
+                    </v-btn>
+                </div>
+            </v-card-text>
+        </v-card>
+
+
+        <label v-if="characterTotal">showing 1 - {{Math.min(characterOffset,characterTotal)}} of {{characterTotal}}</label>
+
+        <v-row>
+            <v-col cols="12">
+                <h3>Characters
+                    <v-icon v-if="loading">mdi-loading mdi-spin</v-icon>
+                </h3>
+                <v-list shaped>
+                    <v-list-item-group v-model="selectedCharacter">
+                        <v-list-item :key="character.id" v-for="(character,index) in characterList">
+                            <v-list-item-icon>
+                                <!--suppress HtmlUnknownTarget -->
+<!--                                <v-img-->
+<!--                                        :src="`${character.thumbnail.path}/standard_large.jpg`"-->
+<!--                                        :alt="`thumbnail image for {{character.name}}`"-->
+<!--                                />-->
+                                <v-img
+                                        :src="`${character.thumbnail.path}/landscape_large.jpg`"
+                                        :alt="`thumbnail image for {{character.name}}`"
+                                        width="190"
+                                        height="140"
+                                />
+<!--                                <v-img-->
+<!--                                        :src="`${character.thumbnail.path}/portrait_large.jpg`"-->
+<!--                                        :alt="`thumbnail image for {{character.name}}`"-->
+<!--                                />-->
+                            </v-list-item-icon>
+
+                            <v-list-item-content>
+                                <div>
+                                    <h5>{{index+1}} {{character.name}}</h5>
+                                    <ul class="mb-3">
+                                        <li> Comics: {{character.comics.available}}</li>
+                                        <li> Series: {{character.series.available}}</li>
+                                        <li> Events: {{character.events.available}}</li>
+                                    </ul>
+                                    <p><span v-html="character.description"/></p>
+                                </div>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list-item-group>
+                </v-list>
+                <v-btn v-if="characterOffset < characterTotal && characterOffset > 0"
+                        @click="loadMoreCharacters"
+                       class="primary"
+                >
+                    Load More Characters
+                    <v-icon v-if="loading">mdi-loading mdi-spin</v-icon>
+                </v-btn>
+                <label v-if="characterOffset >= characterTotal && characterTotal">Search Complete.</label>
+            </v-col>
+
+            <div>
+                <h2>Hello
+                    <v-icon v-if="!character">mdi-waiting mdi-spinner</v-icon>
+                    <span v-else>{{character.name}}</span></h2>
+
+                <pre style="word-break: break-word">{{character}}</pre>
+
+            </div>
+        </v-row>
     </div>
 </template>
 
@@ -21,17 +107,62 @@
             characterId: String
         },
         data: () => ({
-            character: null
+            character: null,
+            name: "",
+            searchString: "",
+            characterOffset: 0,
+            characterLimit: 70,
+            characterList: [],
+            characterTotal: null,
+            searching: false,
+            loading: false,
+            selectedCharacter: null
         }),
+        methods: {
+            loadMoreCharacters() {
+                this.loading = true;
+                return api.searchCharacters(this.searchString, this.characterOffset, this.characterLimit)
+                    .then(json => {
+                        this.characterList.push(...json.data.results);
+                        this.characterOffset+=this.characterLimit;
+                        this.characterLimit=Math.min(100, this.characterLimit+20); // grab 20 extra next time.
+                        this.loading=false;
+                        return json;
+                    })
+
+            },
+            search() {
+                if (this.searching) {
+                    return;
+                }
+                if (!this.name) {
+                    return;
+                }
+
+                this.searchString = this.name;
+                this.searching = true;
+
+                this.characterList = [];
+                this.characterTotal = null;
+
+                this.characterOffset=0;
+                this.characterLimit=70;
+                this.loadMoreCharacters()
+                    .then(json => {
+                        this.searching = false;
+                        this.characterTotal = json.data.total;
+                    })
+            }
+        },
         watch: {
             characterId: {
                 immediate: true,
-                handler: function(newValue) {
-                    this.character=null;
+                handler: function (newValue) {
+                    this.character = null;
 
                     api.fetchCharacter(newValue)
                         .then(json => {
-                            this.character=json;
+                            this.character = json;
                         })
                 }
             }
