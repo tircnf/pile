@@ -41,15 +41,30 @@
                 </v-card-title>
 
                 <v-card-subtitle v-html="character.description"/>
-                <!--suppress HtmlUnknownTarget -->
-                <v-img
-                        :src="`${character.thumbnail.path}.jpg`"
-                        max-height="700px"
-                        contain
-                />
 
-                <pre style="word-break: break-word">{{character}}</pre>
+                <v-card-text>
 
+                    <v-row>
+                        <v-col cols="12" sm="6">
+                            <div>
+                                <!--suppress HtmlUnknownTarget -->
+                                <v-img
+                                        :src="`${character.thumbnail.path}.jpg`"
+                                        contain
+                                />
+                            </div>
+
+                        </v-col>
+
+                        <v-col cols="12" sm="6">
+                            <div>
+                                <h1>What's in here??</h1>
+                                <pre style="white-space: pre-wrap">{{character}}</pre>
+                            </div>
+
+                        </v-col>
+                    </v-row>
+                </v-card-text>
             </v-card>
         </div>
         <div v-else>
@@ -74,9 +89,9 @@
                                     <v-img
                                             :alt="`thumbnail image for {{character.name}}`"
                                             :src="`${character.thumbnail.path}/landscape_large.jpg`"
+                                            contain
                                             height="140"
                                             width="190"
-                                            contain
                                     />
                                     <!--                                <v-img-->
                                     <!--                                        :src="`${character.thumbnail.path}/portrait_large.jpg`"-->
@@ -89,8 +104,9 @@
                                         <h5>{{index+1}} {{character.name}}</h5>
                                         <ul class="mb-3">
                                             <li> Comics: {{character.comics.available}}</li>
-                                            <li> Series: {{character.series.available}}</li>
                                             <li> Events: {{character.events.available}}</li>
+                                            <li> Series: {{character.series.available}}</li>
+                                            <li> Stories: {{character.stories.available}}</li>
                                         </ul>
                                         <p><span v-html="character.description"/></p>
                                     </div>

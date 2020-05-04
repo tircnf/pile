@@ -62,6 +62,7 @@
                             <li> Comics: {{series.comics.available}}</li>
                             <li> Characters: {{series.characters.available}}</li>
                             <li> Events: {{series.events.available}}</li>
+                            <li> Stories: {{series.stories.available}}</li>
                         </ul>
                         <!--suppress HtmlUnknownTarget -->
                         <v-img :src="`${series.thumbnail.path}/portrait_uncanny.jpg`"
