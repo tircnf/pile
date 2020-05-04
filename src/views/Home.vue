@@ -17,7 +17,7 @@
                                 dark
                                 to="search"
                         >
-                            <div class="d-flex flex-no-wrap xjustify-space-between">
+                            <div class="d-flex flex-no-wrap">
                                 <v-avatar
                                         class="ma-3 "
                                         size="125"
