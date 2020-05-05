@@ -44,35 +44,31 @@
                     <v-list shaped>
                         <v-list-item-group v-model="selectedCharacter">
                             <v-list-item :key="character.id" v-for="(character,index) in characterList">
-                                <v-list-item-icon>
-                                    <!--suppress HtmlUnknownTarget -->
-                                    <!--                                <v-img-->
-                                    <!--                                        :src="`${character.thumbnail.path}/standard_large.jpg`"-->
-                                    <!--                                        :alt="`thumbnail image for {{character.name}}`"-->
-                                    <!--                                />-->
-                                    <v-img
-                                            :alt="`thumbnail image for {{character.name}}`"
-                                            :src="`${character.thumbnail.path}/landscape_large.jpg`"
-                                            contain
-                                            height="140"
-                                            width="190"
-                                    />
-                                    <!--                                <v-img-->
-                                    <!--                                        :src="`${character.thumbnail.path}/portrait_large.jpg`"-->
-                                    <!--                                        :alt="`thumbnail image for {{character.name}}`"-->
-                                    <!--                                />-->
-                                </v-list-item-icon>
-
                                 <v-list-item-content>
-                                    <div>
+                                    <v-list-item-title>
                                         <h5>{{index+1}} {{character.name}}</h5>
-                                        <ul class="mb-3">
-                                            <li> Comics: {{character.comics.available}}</li>
-                                            <li> Events: {{character.events.available}}</li>
-                                            <li> Series: {{character.series.available}}</li>
-                                            <li> Stories: {{character.stories.available}}</li>
-                                        </ul>
-                                        <p><span v-html="character.description"/></p>
+                                    </v-list-item-title>
+                                    <div>
+                                        <div class="float-left mr-5 mb-1">
+                                            <!--suppress HtmlUnknownTarget -->
+                                            <v-img
+                                                    :alt="`thumbnail image for {{character.name}}`"
+                                                    :src="`${character.thumbnail.path}/landscape_large.jpg`"
+                                                    contain
+                                                    height="140"
+                                                    width="190"
+                                            />
+                                        </div>
+
+                                        <div class="ml-3">
+                                            <ul class="comic-info mb-3">
+                                                <li> Comics: {{character.comics.available}}</li>
+                                                <li> Events: {{character.events.available}}</li>
+                                                <li> Series: {{character.series.available}}</li>
+                                                <li> Stories: {{character.stories.available}}</li>
+                                            </ul>
+                                            <p><span v-html="character.description"/></p>
+                                        </div>
                                     </div>
                                 </v-list-item-content>
                             </v-list-item>
@@ -99,7 +95,7 @@
                 <v-card-subtitle v-html="character.description"/>
                 <v-card-text>
                     <v-row>
-                        <v-col cols="12" sm="3">
+                        <v-col cols="6">
                             <div>
                                 <!--suppress HtmlUnknownTarget -->
                                 <v-img
@@ -108,9 +104,9 @@
                                 />
                             </div>
                         </v-col>
-                        <v-col cols="12" sm="9">
+                        <v-col cols="12">
                             <div>
-                                <v-tabs xvertical v-model="selectedTab">
+                                <v-tabs v-model="selectedTab" xvertical>
                                     <v-tab>
                                         <v-icon left>mdi-account</v-icon>
                                         Comics: {{character.comics.available}}
@@ -134,7 +130,7 @@
                                     <v-tab-item>
                                         <v-card flat>
                                             <v-card-text>
-                                                <ComicList @more="loadMoreComics()" :comic-list="comicListPromise"/>
+                                                <ComicList :comic-list="comicListPromise" @more="loadMoreComics()"/>
                                             </v-card-text>
                                         </v-card>
                                     </v-tab-item>
@@ -142,7 +138,9 @@
                                         <v-card flat>
                                             <v-card-text>
                                                 <ul>
-                                                    <li v-for="event in character.events.items" :key="event.resourceURI">{{event.name}}</li>
+                                                    <li :key="event.resourceURI"
+                                                        v-for="event in character.events.items">{{event.name}}
+                                                    </li>
                                                 </ul>
                                             </v-card-text>
                                         </v-card>
@@ -151,11 +149,17 @@
                                         <v-card flat>
                                             <v-card-text>
                                                 <p>
-                                                    Fusce a quam. Phasellus nec sem in justo pellentesque facilisis. Nam eget dui. Proin viverra, ligula sit amet ultrices semper, ligula arcu tristique sapien, a accumsan nisi mauris ac eros. In dui magna, posuere eget, vestibulum et, tempor auctor, justo.
+                                                    Fusce a quam. Phasellus nec sem in justo pellentesque facilisis. Nam
+                                                    eget dui. Proin viverra, ligula sit amet ultrices semper, ligula
+                                                    arcu tristique sapien, a accumsan nisi mauris ac eros. In dui magna,
+                                                    posuere eget, vestibulum et, tempor auctor, justo.
                                                 </p>
 
                                                 <p class="mb-0">
-                                                    Cras sagittis. Phasellus nec sem in justo pellentesque facilisis. Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nam at tortor in tellus interdum sagittis.
+                                                    Cras sagittis. Phasellus nec sem in justo pellentesque facilisis.
+                                                    Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Donec quam
+                                                    felis, ultricies nec, pellentesque eu, pretium quis, sem. Nam at
+                                                    tortor in tellus interdum sagittis.
                                                 </p>
                                             </v-card-text>
                                         </v-card>
@@ -197,7 +201,7 @@
         },
         data: () => ({
             character: null,
-            comicOffset:0,
+            comicOffset: 0,
             comicLimit: 10,
             comicListPromise: null,
             name: "",
@@ -232,7 +236,7 @@
                     return;
                 }
 
-                this.selectedCharacter=null;
+                this.selectedCharacter = null;
                 // if we have a selected character, remove it.
                 if (this.characterId) {
                     this.$router.push({name: "character"});
@@ -254,11 +258,11 @@
             },
             showComics() {
                 if (this.characterId) {
-                    this.comicListPromise=api.fetchComicsForCharacter(this.characterId, this.comicOffset,10)
-                    .then(results=> {
-                        this.comicOffset+=results.limit;
-                        return results;
-                    })
+                    this.comicListPromise = api.fetchComicsForCharacter(this.characterId, this.comicOffset, 10)
+                        .then(results => {
+                            this.comicOffset += results.limit;
+                            return results;
+                        })
                 }
             },
             loadMoreComics() {
@@ -269,9 +273,10 @@
             characterId: {
                 immediate: true,
                 handler: function (newValue) {
-                    console.log("New character selected:  ",newValue);
+                    console.log("New character selected:  ", newValue);
                     this.character = null;
-                    this.comicListPromise=null;
+                    this.comicListPromise = null;
+                    this.comicOffset=0;
                     if (newValue) {
                         api.fetchCharacter(newValue)
                             .then(json => {
@@ -296,5 +301,7 @@
 </script>
 
 <style scoped>
-
+ ul.comic-info {
+     list-style: none
+ }
 </style>
