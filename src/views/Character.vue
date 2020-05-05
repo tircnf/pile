@@ -6,7 +6,6 @@
             <v-card-subtitle>Enter the first few letters of the Marvel Character. Press 'enter' to run the serach.
             </v-card-subtitle>
             <v-card-text>
-
                 <div class="d-flex flex-no-wrap">
                     <v-avatar
                             class="mr-5 mt-1"
@@ -32,42 +31,7 @@
             </v-card-text>
         </v-card>
 
-
-        <div v-if="character">
-            <v-card>
-                <v-card-title>
-                    <v-icon v-if="!character">mdi-waiting mdi-spinner</v-icon>
-                    <span v-else>{{character.name}}</span>
-                </v-card-title>
-
-                <v-card-subtitle v-html="character.description"/>
-
-                <v-card-text>
-
-                    <v-row>
-                        <v-col cols="12" sm="6">
-                            <div>
-                                <!--suppress HtmlUnknownTarget -->
-                                <v-img
-                                        :src="`${character.thumbnail.path}.jpg`"
-                                        contain
-                                />
-                            </div>
-
-                        </v-col>
-
-                        <v-col cols="12" sm="6">
-                            <div>
-                                <h1>What's in here??</h1>
-                                <pre style="white-space: pre-wrap">{{character}}</pre>
-                            </div>
-
-                        </v-col>
-                    </v-row>
-                </v-card-text>
-            </v-card>
-        </div>
-        <div v-else>
+        <div v-if="!character">
 
             <label v-if="characterTotal">showing 1 - {{Math.min(characterOffset,characterTotal)}} of {{characterTotal}}
                 {{selectedCharacter}}</label>
@@ -125,20 +89,117 @@
                 </v-col>
             </v-row>
         </div>
+
+        <div v-else>
+            <v-card>
+                <v-card-title>
+                    <v-icon v-if="loading">mdi-waiting mdi-spinner</v-icon>
+                    <span v-else>{{character.name}} -- {{selectedTab}}</span>
+                </v-card-title>
+                <v-card-subtitle v-html="character.description"/>
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="12" sm="3">
+                            <div>
+                                <!--suppress HtmlUnknownTarget -->
+                                <v-img
+                                        :src="`${character.thumbnail.path}.jpg`"
+                                        contain
+                                />
+                            </div>
+                        </v-col>
+                        <v-col cols="12" sm="9">
+                            <div>
+                                <v-tabs xvertical v-model="selectedTab">
+                                    <v-tab>
+                                        <v-icon left>mdi-account</v-icon>
+                                        Comics: {{character.comics.available}}
+                                    </v-tab>
+                                    <v-tab>
+                                        <v-icon left>mdi-lock</v-icon>
+                                        Events: {{character.events.available}}
+                                    </v-tab>
+                                    <v-tab>
+                                        <v-icon left>mdi-access-point</v-icon>
+                                        Series: {{character.series.available}}
+                                    </v-tab>
+                                    <v-tab>
+                                        <v-icon left>mdi-access-point</v-icon>
+                                        Stories: {{character.stories.available}}
+                                    </v-tab>
+                                    <v-tab>
+                                        JSON response
+                                    </v-tab>
+
+                                    <v-tab-item>
+                                        <v-card flat>
+                                            <v-card-text>
+                                                <ComicList @more="loadMoreComics()" :comic-list="comicListPromise"/>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-tab-item>
+                                    <v-tab-item>
+                                        <v-card flat>
+                                            <v-card-text>
+                                                <ul>
+                                                    <li v-for="event in character.events.items" :key="event.resourceURI">{{event.name}}</li>
+                                                </ul>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-tab-item>
+                                    <v-tab-item>
+                                        <v-card flat>
+                                            <v-card-text>
+                                                <p>
+                                                    Fusce a quam. Phasellus nec sem in justo pellentesque facilisis. Nam eget dui. Proin viverra, ligula sit amet ultrices semper, ligula arcu tristique sapien, a accumsan nisi mauris ac eros. In dui magna, posuere eget, vestibulum et, tempor auctor, justo.
+                                                </p>
+
+                                                <p class="mb-0">
+                                                    Cras sagittis. Phasellus nec sem in justo pellentesque facilisis. Proin sapien ipsum, porta a, auctor quis, euismod ut, mi. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nam at tortor in tellus interdum sagittis.
+                                                </p>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-tab-item>
+                                    <v-tab-item>
+                                        <v-card flat>
+                                            <v-card-text>
+                                                Show me the stories.
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-tab-item>
+                                    <v-tab-item>
+                                        <v-card flat>
+                                            <v-card-text>
+                                                <pre style="white-space: pre-wrap">{{character}}</pre>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-tab-item>
+                                </v-tabs>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+        </div>
     </div>
 </template>
 
 <script>
 
     import api from "../lib/api";
+    import ComicList from "../components/ComicList";
 
     export default {
         name: "Character.vue",
+        components: {ComicList},
         props: {
             characterId: String
         },
         data: () => ({
             character: null,
+            comicOffset:0,
+            comicLimit: 10,
+            comicListPromise: null,
             name: "",
             searchString: "",
             characterOffset: 0,
@@ -147,7 +208,8 @@
             characterTotal: null,
             searching: false,
             loading: false,
-            selectedCharacter: null
+            selectedCharacter: null,
+            selectedTab: 0,
         }),
         methods: {
             loadMoreCharacters() {
@@ -170,6 +232,7 @@
                     return;
                 }
 
+                this.selectedCharacter=null;
                 // if we have a selected character, remove it.
                 if (this.characterId) {
                     this.$router.push({name: "character"});
@@ -188,18 +251,32 @@
                         this.searching = false;
                         this.characterTotal = json.data.total;
                     })
+            },
+            showComics() {
+                if (this.characterId) {
+                    this.comicListPromise=api.fetchComicsForCharacter(this.characterId, this.comicOffset,10)
+                    .then(results=> {
+                        this.comicOffset+=results.limit;
+                        return results;
+                    })
+                }
+            },
+            loadMoreComics() {
+                this.showComics();
             }
         },
         watch: {
             characterId: {
                 immediate: true,
                 handler: function (newValue) {
+                    console.log("New character selected:  ",newValue);
                     this.character = null;
+                    this.comicListPromise=null;
                     if (newValue) {
-
                         api.fetchCharacter(newValue)
                             .then(json => {
                                 this.character = json;
+                                this.showComics();
                             })
                     }
                 }
@@ -213,7 +290,7 @@
                         })
                     }
                 }
-            }
+            },
         }
     }
 </script>

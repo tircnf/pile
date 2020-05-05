@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h1>Is this thing on?</h1>
         <v-row>
             <v-col cols="0" sm="1"/> <!-- offset one column -->
             <v-col cols="3">
@@ -140,8 +141,8 @@
             </v-btn>
         </div>
 
-        <!--            This is my comicList.-->
-        <!--            <pre>{{comicList}}</pre>-->
+        <!--            This is my comicListPromise.-->
+        <!--            <pre>{{comicListPromise}}</pre>-->
         <!---->
         <!--            <pre>{{series}}</pre>-->
 

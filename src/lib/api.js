@@ -99,6 +99,23 @@ function fetchComicsForSeries(id, offset, limit) {
         })
 }
 
+function fetchComicsForCharacter(characterId, offset, limit) {
+    const url = new URL(`${endpoint}/v1/public/characters/${characterId}/comics`);
+    const params = {
+        apikey: apiKey,
+        offset: offset,
+        limit: limit,
+        orderBy: "onsaleDate"
+    };
+
+    Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
+
+    return fetch(url.toString())
+        .then(response => response.json())
+        .then(json => {
+            return json.data // just the envelope with offset, limit, total, count and results.
+        })
+}
 
 const api = {
     searchCharacters,
@@ -107,6 +124,7 @@ const api = {
     fetchSeries,
     fetchComicsForSeries,
 
+    fetchComicsForCharacter,
 };
 
 
