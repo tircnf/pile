@@ -1,6 +1,80 @@
 <template>
     <div>
-        <h1>Is this thing on?</h1>
+
+        <v-card>
+            <v-card-title>Series Search</v-card-title>
+            <v-card-subtitle>Enter the first few letters of the Marvel Series. Press 'enter' to search.
+            </v-card-subtitle>
+            <v-card-text>
+                <div class="d-flex flex-no-wrap">
+                    <v-avatar
+                            class="mr-5 mt-1"
+                            tile
+                            xsize="125"
+
+                    >
+                        <v-img src="../assets/marvel-banner.jpg"
+                        />
+                    </v-avatar>
+                    <v-text-field
+                            :name="new Date().toString() + Math.random()"
+                            :outlined="true"
+                            @keyup.enter="search"
+                            v-model="q"
+                    />
+
+                    <v-btn @click="search" class="primary mt-2 ml-2">
+                        Search
+                        <v-icon v-if="searching">mdi-loading mdi-spin</v-icon>
+                    </v-btn>
+                </div>
+
+                <v-list shaped>
+<!--                    <v-list-item v-if="seriesList.attributionHTML">-->
+<!--                        <ul>-->
+<!--                            <li v-if="seriesList.data.count">Showing Series-->
+<!--                                {{seriesList.data.offset+1}} to {{seriesList.data.offset +-->
+<!--                                seriesList.data.count}}-->
+<!--                                of-->
+<!--                                {{seriesList.data.total}}-->
+<!--                            </li>-->
+<!--                            <li v-else>No Results found</li>-->
+<!--                        </ul>-->
+<!--                    </v-list-item>-->
+                    <v-list-item-group v-model="selectedSeries">
+                        <v-list-item :key="series.id" v-for="(series,index) in seriesList">
+                            <v-list-item-icon>
+                                <!--suppress HtmlUnknownTarget -->
+                                <v-img
+                                        :height="thumbnailSize.height"
+                                        :src="`${series.thumbnail.path}/${thumbnailSize.name}.jpg`"
+                                        :width="thumbnailSize.width"
+                                        alt="thumbnail image"
+
+                                />
+                            </v-list-item-icon>
+
+                            <v-list-item-content>
+                                <div>
+
+                                    <!--                        {{series.id}} - -->
+                                    <h5>{{index+1}} {{series.title}}</h5>
+                                    <ul class="mb-3">
+                                        <li> Comics: {{series.comics.available}}</li>
+                                        <li> Characters: {{series.characters.available}}</li>
+                                        <li> Events: {{series.events.available}}</li>
+                                        <li> Stories: {{series.stories.available}}</li>
+                                    </ul>
+                                    <p><span v-html="series.description"/></p>
+                                    <!--                <pre>{{series}}</pre>-->
+                                </div>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list-item-group>
+                </v-list>
+            </v-card-text>
+        </v-card>
+
         <v-row>
             <v-col cols="0" sm="1"/> <!-- offset one column -->
             <v-col cols="3">
@@ -46,7 +120,7 @@
                 </v-hover>
             </v-col>
 
-            <v-col v-if="series" cols="6" sm="4">
+            <v-col cols="6" sm="4" v-if="series">
                 <v-card>
                     <v-card-title>
                         <v-icon v-if="!series">mdi-waiting mdi-spinner</v-icon>
@@ -113,7 +187,7 @@
 
         <div v-if="series">
             <v-row v-if="comicList.data">
-                <v-col :key="comic.id" cols="6" sm="4" md="3"  lg="2" v-for="comic in comicList.data.results">
+                <v-col :key="comic.id" cols="6" lg="2" md="3" sm="4" v-for="comic in comicList.data.results">
                     <v-hover
                             open-delay="50"
                             v-slot:default="{ hover }"
@@ -158,6 +232,9 @@
             seriesId: String,
         },
         data: () => ({
+            q: "",
+            searchString: "",
+            selectedSeries: null,
             series: null,
             previous: null,
             next: null,
@@ -165,13 +242,56 @@
             comicLimit: 12,
             comicList: null,
             comicsLoading: false,
+            searching: false,
             thumbnailSize: {
                 name: "portrait_uncanny",
                 width: 100,
                 height: 150,
             },
+            seriesList: []
         }),
         methods: {
+            search() {
+                if (this.searching) {
+                    return;
+                }
+                if (!this.q) {
+                    return;
+                }
+
+                if (this.seriesId) {
+                    this.$router.push({name: "series"})
+                }
+
+                this.searchString = this.q;
+                this.searching = true;
+
+                this.seriesList = [];
+                this.seriesOffset = 0;
+                this.seriesLimit = 20;
+
+                this.loadMoreSeries()
+                    .then(json => {
+                        this.searching = false;
+                        this.seriesTotal = json.data.total;
+                    })
+            },
+            showSeries() {
+                if (this.seriesId) {
+                    //this.seriesList = api.
+                }
+            },
+            loadMoreSeries() {
+                this.loading = true;
+                return api.searchSeries(this.q, this.seriesOffset, this.seriesLimit)
+                    .then(json => {
+                        this.seriesList.push(...json.data.results);
+                        this.seriesOffset += this.seriesLimit;
+                        this.seriesLimit = Math.min(100, this.seriesLimit + 20)
+                        this.loading = false;
+                        return json;
+                    })
+            },
             fetchSeries(id) {
                 return api.fetchSeries(id)
             },
@@ -204,26 +324,49 @@
             seriesId: {
                 immediate: true,
                 handler: function (newValue) {
+                    console.log("New series selected:  ", newValue);
                     this.series = null;
-                    this.previous = null;
-                    this.next = null;
+                    this.seriesOffset = 0;
+                    if (newValue) {
 
-                    this.comicList = {};
-                    this.comicOffset = 0;
-                    this.comicLimit = 12;
+                        this.series = null;
+                        this.previous = null;
+                        this.next = null;
 
-                    this.fetchSeries(newValue).then(json => {
-                        this.series = json;
-                        this.fetchMoreComics();
+                        this.comicList = {};
+                        this.comicOffset = 0;
+                        this.comicLimit = 12;
+                        this.seriesList=[];  // build a seriesList like the comics List, and
+                        // this would be the promise.
 
-                        if (this.series.previous) {
-                            this.fetchSeries(this.getId(this.series.previous.resourceURI)).then(json => this.previous = json);
-                        }
+                        this.fetchSeries(newValue).then(json => {
+                            this.series = json;
+                            this.fetchMoreComics();
 
-                        if (this.series.next) {
-                            this.fetchSeries(this.getId(this.series.next.resourceURI)).then(json => this.next = json);
-                        }
-                    })
+                            if (this.series.previous) {
+                                this.fetchSeries(this.getId(this.series.previous.resourceURI)).then(json => this.previous = json);
+                            }
+
+                            if (this.series.next) {
+                                this.fetchSeries(this.getId(this.series.next.resourceURI)).then(json => this.next = json);
+                            }
+                        })
+                    }
+                }
+            },
+            selectedSeries: {
+                handler: function(newValue) {
+                    if (newValue!== undefined) {
+                        this.$router.push({
+                            name: "series",
+                            params: {seriesId: this.seriesList[newValue].id.toString()}
+                        })
+                    } else {
+                        this.$router.push({
+                            name: "series",
+                            params: {}
+                        })
+                    }
                 }
             }
         }

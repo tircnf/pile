@@ -3,7 +3,7 @@
 
         <v-card>
             <v-card-title>Character Search</v-card-title>
-            <v-card-subtitle>Enter the first few letters of the Marvel Character. Press 'enter' to run the serach.
+            <v-card-subtitle>Enter the first few letters of the Marvel Character. Press 'enter' to run the search.
             </v-card-subtitle>
             <v-card-text>
                 <div class="d-flex flex-no-wrap">
