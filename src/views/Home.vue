@@ -74,7 +74,7 @@
                                 dark
                                 to="series"
                         >
-                            <v-card-title class="headline">Find your favorite Comic Book Series</v-card-title>
+                            <v-card-title class="headline">Find your favorite Series</v-card-title>
 
                             <v-card-subtitle>There are a lot of great comic series out there starting from way back in the 1950's.  Check out 'Journey Into Mystery'</v-card-subtitle>
 
